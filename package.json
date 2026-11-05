@@ -26,9 +26,9 @@
   "license": "SEE LICENSE IN LICENSE",
   "repository": {
     "type": "git",
-    "url": "https://github.com/FizzNetwork/gapt-protocol.git"
+    "url": "https://github.com/Aetherion-Substrata/gapt-protocol.git"
   },
-  "homepage": "https://github.com/FizzNetwork/gapt-protocol#readme",
+  "homepage": "https://github.com/Aetherion-Substrata/gapt-protocol#readme",
   "engines": { "node": ">=14.0.0" },
   "files": ["src", "bin", "dist", "examples", "README.md", "CHANGELOG.md", "LICENSE"]
 }

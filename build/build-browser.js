@@ -42,8 +42,8 @@ function ensureDir(d) {
 function buildBundle() {
   const parts = [];
 
-  parts.push('/*! @gapt/protocol v' + VERSION + ' - browser bundle');
-  parts.push(' *  MIT (c) Kizldn / FizzNetwork - https://github.com/FizzNetwork/gapt');
+  parts.push('/*! gapt-protocol v' + VERSION + ' - browser bundle');
+  parts.push(' *  (c) 2026 Kizldn / Aetherion Substrata Ltd - Noncommercial use-only licence, see LICENSE - https://github.com/Aetherion-Substrata/gapt-protocol');
   parts.push(' *  In-memory persistence shim. See src/persist.browser.js for caveats.');
   parts.push(' */');
   parts.push('(function (global) {');

@@ -1,6 +1,6 @@
 // GAPT Core v0.5 -- Gapt Protocol
 // Weighted trust, fingerprinting, network comms, inheritance
-// FizzNetwork -- @fizznetwork -- github.com/FizzNetwork/gapt
+// Aetherion Substrata Ltd -- github.com/Aetherion-Substrata/gapt-protocol
 
 const { saveGapMemory, loadGapMemory } = require('./persist');
 const { GaptNetwork } = require('./network');
