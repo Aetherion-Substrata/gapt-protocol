@@ -3,9 +3,9 @@
 > A data structure where the gap between nodes is a first-class citizen.
 
 [![npm](https://img.shields.io/npm/v/gapt-protocol)](https://www.npmjs.com/package/gapt-protocol)
-[![licence](https://img.shields.io/badge/licence-noncommercial-blue)](./LICENSE)
+[![licence](https://img.shields.io/badge/licence-free_for_individuals_%C2%B7_companies_pay-blue)](./LICENSE)
 [![types](https://img.shields.io/badge/types-bundled-blue)](./src/gapt.d.ts)
-[![by](https://img.shields.io/badge/by-Aetherion-brightgreen)](https://github.com/FizzNetwork)
+[![by](https://img.shields.io/badge/by-Aetherion_Substrata-brightgreen)](https://github.com/Aetherion-Substrata)
 
 ---
 
@@ -312,6 +312,6 @@ Applied to data structures: what if the gap between nodes did real work?
 
 ## Licence
 
-Free for personal and noncommercial **use only** — no modification, no development, no redistribution, no derivative works. **Commercial use requires a licence.** See [LICENSE](./LICENSE). Commercial licensing: officialfizznet@gmail.com
+Free for individuals, solo builders, students, researchers and nonprofits — use it, learn from it, change it for your own projects. **Companies pay.** Prices are in [COMMERCIAL.md](./COMMERCIAL.md); the terms are the [Aetherion Fair Use Licence](./LICENSE). Licensing: hello@aetherionsubstrata.xyz
 
-© 2026 Aetherion · [Kizldn](https://github.com/kizldn) · [FizzNetwork](https://github.com/FizzNetwork) · [@fizznetwork](https://x.com/fizznetwork)
+© 2026 Aetherion Substrata Ltd · [Kizldn](https://github.com/kizldn) · [Aetherion-Substrata](https://github.com/Aetherion-Substrata) · [@fizznetwork](https://x.com/fizznetwork)

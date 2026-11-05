@@ -1,48 +1,110 @@
-FizzNetwork GAPT Protocol — Noncommercial Use-Only License, v1.0
-Copyright (c) 2026 Kizldn — FizzNetwork (https://github.com/FizzNetwork). All rights reserved.
+GAPT Protocol - Aetherion Fair Use Licence, v2.0
+Copyright (c) 2026 Aetherion Substrata Ltd (England and Wales, company no. 17305681)
+and Kizldn. All rights reserved.
 
-This software, including its source code, binaries, and documentation (the
-"Software"), is made available to you FREE OF CHARGE for PERSONAL and
-NONCOMMERCIAL USE ONLY, subject to the terms below. The Software is licensed,
-not sold. NOT OPEN SOURCE.
+This is the licence for the GAPT Protocol software, its source code, builds
+and documentation (the "Software"). The Software is licensed, not sold. It is
+not open source. Plain English is used on purpose; these terms govern.
 
-1. LICENSE GRANT — what you MAY do
-   You may download, install, run, and USE the Software, as delivered and
-   unmodified, for personal, educational, research, evaluation, and other
-   strictly noncommercial purposes.
+------------------------------------------------------------------------
+THE SHORT VERSION
+------------------------------------------------------------------------
+Individuals use it free. Companies pay. That is the whole idea.
 
-2. RESTRICTIONS — what you MAY NOT do without a separate written license
-   You may NOT:
-   (a) use the Software for any commercial purpose, or for any direct or
-       indirect commercial or monetary gain;
-   (b) modify, adapt, translate, or create derivative works of the Software;
-   (c) develop on, extend, fork, or build upon the Software;
-   (d) reverse engineer, decompile, or disassemble the Software, except to the
-       extent this restriction is prohibited by applicable law;
-   (e) redistribute, republish, sublicense, sell, rent, lease, or otherwise
-       transfer the Software or any copy or portion of it;
-   (f) remove or alter any copyright, license, or proprietary notice.
+------------------------------------------------------------------------
+1. FREE USE - who may use the Software at no charge
+------------------------------------------------------------------------
+You may download, install, run, study and modify the Software, free of
+charge, if you are using it as:
 
-3. COMMERCIAL LICENSE
-   Any commercial use, modification, development, or redistribution requires a
-   separate written commercial license from FizzNetwork.
-   Contact: officialfizznet@gmail.com
+  (a) an individual, for personal projects, learning or experimentation;
+  (b) a solo builder or a team of up to two people, in a project that earns
+      under GBP 10,000 a year in total (revenue, not profit), including
+      side projects you hope will one day earn more;
+  (c) a student, teacher or researcher, for study, teaching or published
+      research, at any institution;
+  (d) a registered charity or nonprofit, for its own work;
+  (e) anyone, to evaluate the Software before deciding to buy a licence,
+      for as long as the evaluation honestly takes.
 
-4. RESERVATION OF RIGHTS
-   All rights not expressly granted are reserved by FizzNetwork. No rights are
-   granted under any open-source license (including but not limited to MIT,
-   Apache, BSD, GPL, or LGPL).
+Under free use you may change the code for your own purposes. You may not
+publish or distribute your changed version (see section 3). Improvements
+you want to share go back to the project as contributions (section 6).
 
+------------------------------------------------------------------------
+2. COMMERCIAL USE - who must hold a paid licence
+------------------------------------------------------------------------
+Any use outside section 1 is commercial use and requires a written
+commercial licence from Aetherion Substrata Ltd before it starts. This
+includes, without limitation:
+
+  (a) use inside a company, partnership or other organisation with more
+      than two people, whether or not the use is internal;
+  (b) use in a product, service, tool or process that earns, or is part of
+      something that earns, GBP 10,000 or more a year;
+  (c) use by, or on behalf of, a client or customer;
+  (d) shipping the Software, changed or unchanged, inside anything you sell,
+      license, host or otherwise provide to others.
+
+If you grow out of section 1, you have 60 days from crossing the line to
+take out a commercial licence. Nobody is punished for succeeding; you just
+start paying when it starts paying you.
+
+Terms and prices are in COMMERCIAL.md next to this file.
+
+------------------------------------------------------------------------
+3. WHAT NOBODY MAY DO without written permission
+------------------------------------------------------------------------
+  (a) redistribute, republish, sublicense, sell, rent or lease the Software
+      or any modified version of it, in source or built form;
+  (b) remove or alter any copyright, licence or ownership notice;
+  (c) use the names "GAPT", "GAPT Protocol", "Aetherion" or "Aetherion
+      Substrata" to suggest endorsement, or on a derivative, without consent;
+  (d) use the Software to build a competing product that is then offered to
+      others, under any name.
+
+------------------------------------------------------------------------
+4. PATENTS AND OWNERSHIP
+------------------------------------------------------------------------
+Aetherion Substrata Ltd and Kizldn hold the copyright. Patent applications
+covering methods used in the Software are on file at the UK Intellectual
+Property Office. A free-use licence under section 1 includes permission to
+use those methods only within the Software and only within section 1. No
+other patent licence is granted, express or implied. All rights not
+expressly granted are reserved.
+
+------------------------------------------------------------------------
 5. TERMINATION
-   This license ends automatically if you breach any term. On termination you
-   must stop using and delete all copies of the Software.
+------------------------------------------------------------------------
+This licence ends automatically if you break it. On termination you must
+stop using the Software and delete your copies. A commercial licence has
+its own term and ending rules.
 
-6. NO WARRANTY / NO LIABILITY
-   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-   IMPLIED, INCLUDING BUT NOT LIMITED TO MERCHANTABILITY, FITNESS FOR A
-   PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
-   COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY,
-   WHETHER IN CONTRACT, TORT, OR OTHERWISE, ARISING FROM OR IN CONNECTION WITH
-   THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+------------------------------------------------------------------------
+6. CONTRIBUTIONS
+------------------------------------------------------------------------
+If you send a change, fix or idea to the project (pull request, patch,
+message), you grant Aetherion Substrata Ltd a perpetual, worldwide, free
+licence to use it, change it, and include it in the Software under any
+licence, and you confirm it is yours to give. You keep your own copyright.
+Contributors are credited.
 
-For all licensing inquiries: officialfizznet@gmail.com
+------------------------------------------------------------------------
+7. NO WARRANTY, NO LIABILITY
+------------------------------------------------------------------------
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NON-INFRINGEMENT. TO THE FULLEST EXTENT PERMITTED BY LAW, AETHERION SUBSTRATA
+LTD AND THE AUTHORS ARE NOT LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY
+ARISING FROM THE SOFTWARE OR ITS USE. Nothing in this licence limits
+liability that cannot be limited under English law.
+
+------------------------------------------------------------------------
+8. GENERAL
+------------------------------------------------------------------------
+This licence is governed by the law of England and Wales. If part of it is
+found unenforceable, the rest still stands. Earlier versions of the Software
+released under other terms keep those terms for those versions only; this
+licence applies to version 0.12.0 and later.
+
+Questions, licences, anything else: hello@aetherionsubstrata.xyz

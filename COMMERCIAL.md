@@ -1,89 +1,80 @@
 # Commercial licensing — GAPT Protocol
 
-GAPT is free for personal, educational, research and evaluation use under the
-[noncommercial licence](LICENSE).
+GAPT is free for individuals, solo builders, students, researchers and
+nonprofits under the [Aetherion Fair Use Licence](LICENSE).
 
-**If you are using it inside a business, you need a commercial licence.** That
-is not a penalty — it is the arrangement that keeps the noncommercial version
-free and maintained.
+**If a company uses it, the company pays.** That is what keeps the free
+version free, maintained, and defended.
 
 ---
 
 ## Do I need one?
 
-You need a commercial licence if any of these are true:
+**No** — you are covered by the free licence if you are:
 
-- GAPT runs inside a product, service or internal tool at a company
-- It is part of something you charge for, directly or indirectly
-- It runs in production at an organisation with revenue
-- You are redistributing it, modified or not, as part of your own offering
+- an individual, hobbyist or learner
+- a solo builder or a two-person team earning under £10k a year from the thing that uses GAPT
+- a student, teacher or researcher
+- a registered charity or nonprofit
+- evaluating it before deciding — take the time you need
 
-You do **not** need one for:
+**Yes** — you need a commercial licence if:
 
-- Personal projects, side projects, learning
-- Academic and published research
-- Evaluating it before deciding — take as long as you need
-- Nonprofit and charitable use
+- GAPT runs inside a company or organisation of more than two people, even internally
+- it is part of a product or service earning £10k+ a year
+- you use it for a client
+- you ship it inside something you sell, host or license to others
 
-If you are unsure, ask. The answer is usually simpler than the question.
+Crossed the line? You have 60 days. Nobody gets punished for growing.
 
 ---
 
-## What a commercial licence includes
+## Prices
 
-| | |
-|---|---|
-| Commercial use rights | perpetual for the licensed version, worldwide |
-| Modification | yes, including private forks |
-| Redistribution inside your product | yes |
-| Source access | yes — you get what we have, not a black box |
-| Updates | for the term |
-| Support | by tier, see below |
+| Tier | Who | Price |
+|---|---|---|
+| **Indie** | one person, one product, over the free threshold | **£49 / year** |
+| **Startup** | company under £1M annual revenue, unlimited products | **£299 / year** |
+| **Organisation** | company over £1M revenue, unlimited products | **£1,500 / year** |
+| **OEM / redistribution** | you ship GAPT inside something you sell to others | ask — a straight number, not a discovery call |
 
-## Tiers
-
-**Single product** — one product or service, unlimited internal seats.
-
-**Organisation** — everything you build, unlimited products.
-
-**OEM / redistribution** — you ship GAPT inside something you sell to others.
-
-Pricing depends on scale and use. Ask and you will get a straight number, not
-a discovery call.
+Every paid tier includes: commercial use rights for the licensed term, the
+right to modify and keep private forks, redistribution inside your own
+product, full source, and updates for the term.
 
 ---
 
 ## Support and services
 
-Available with any tier, or separately:
+With any tier, or on their own:
 
-- Integration help — getting GAPT into an existing system
-- Custom bridge classes and edge semantics for your threat model
-- Adversarial review of your edge topology
-- Priority fixes
+- integration help — getting GAPT into an existing system
+- custom bridge classes and edge semantics for your threat model
+- adversarial review of your edge topology
+- priority fixes
 
 ---
 
-## The evidence angle
+## Why GAPT
 
 GAPT persists every transmission attempt with an HMAC signature: what was
 tried, by which caller signature, whether it passed, why it failed, and how
 the trust tier moved. That log is tamper-evident by construction.
 
-If you need to demonstrate that an access control actually held — to an
-auditor, a customer, or after an incident — that trail is the reason to use
-this rather than a permission check that leaves nothing behind.
+If you need to show that an access control actually held — to an auditor, a
+customer, or after an incident — that trail is the reason to use this rather
+than a permission check that leaves nothing behind.
 
 ---
 
 ## Getting in touch
 
-**licensing@fizznetwork.xyz**
+**hello@aetherionsubstrata.xyz**
 
-Tell us roughly what you are building and at what scale. A sentence is enough
-to start.
+Tell us what you are building and roughly at what scale. A sentence is
+enough to start; you will get a number back.
 
 ---
 
-*GAPT Protocol — FizzNetwork Solutions. This page describes commercial terms
-in plain language; the licence agreement itself governs.*
+*GAPT Protocol — Aetherion Substrata Ltd. This page describes commercial
+terms in plain language; the licence agreement itself governs.*
