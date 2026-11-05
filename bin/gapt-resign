@@ -1,0 +1,100 @@
+#!/usr/bin/env node
+// gapt-resign -- idempotent migration helper.
+// Walks the configured data directory, loads each unsigned gap_*.json under
+// the migration grace flag, and writes back the HMAC-signed envelope.
+// Safe to run multiple times. Returns non-zero if any file failed.
+//
+// Usage: gapt-resign [--data-dir <path>] [--dry-run] [--verbose]
+//
+// Env:
+//   GAPT_HMAC_SECRET (required for normal use)
+//   GAPT_HMAC_SECRET_PREV (optional, for in-flight rotation)
+
+'use strict';
+
+const fs   = require('fs');
+const path = require('path');
+
+const args = process.argv.slice(2);
+let dataDir = path.join(process.cwd(), 'data');
+let dryRun = false;
+let verbose = false;
+for (let i = 0; i < args.length; i++) {
+  const a = args[i];
+  if (a === '--data-dir' && args[i + 1]) { dataDir = path.resolve(args[++i]); }
+  else if (a === '--dry-run') { dryRun = true; }
+  else if (a === '--verbose' || a === '-v') { verbose = true; }
+  else if (a === '--help' || a === '-h') {
+    console.log('Usage: gapt-resign [--data-dir <path>] [--dry-run] [--verbose]');
+    process.exit(0);
+  }
+}
+
+if (!fs.existsSync(dataDir)) {
+  console.error('gapt-resign: data directory not found: ' + dataDir);
+  process.exit(2);
+}
+if (!process.env.GAPT_HMAC_SECRET) {
+  console.error('gapt-resign: GAPT_HMAC_SECRET is not set. Export a 32+ byte hex key first.');
+  process.exit(2);
+}
+
+// One-shot grace flag for THIS process only. We do NOT mutate the user's environment.
+process.env.GAPT_HMAC_ACCEPT_UNSIGNED = '1';
+
+// Resolve persist module relative to where the script is installed (bin/) -- src is one level up.
+let persist;
+try {
+  persist = require(path.join(__dirname, '..', 'src', 'persist'));
+} catch (e) {
+  // Allow installed-via-npm location
+  try { persist = require('gapt/src/persist'); }
+  catch (e2) {
+    console.error('gapt-resign: could not locate persist module. Run from inside the gapt package directory.');
+    process.exit(2);
+  }
+}
+
+const files = fs.readdirSync(dataDir).filter(f => f.startsWith('gap_') && f.endsWith('.json'));
+if (files.length === 0) {
+  console.log('gapt-resign: no gap_*.json files in ' + dataDir + '. Nothing to do.');
+  process.exit(0);
+}
+
+let migrated = 0, alreadySigned = 0, failed = 0;
+for (const f of files) {
+  const full = path.join(dataDir, f);
+  let parsed;
+  try { parsed = JSON.parse(fs.readFileSync(full, 'utf8')); }
+  catch (err) { console.error('  [SKIP] ' + f + ' -- bad JSON (' + err.message + ')'); failed++; continue; }
+
+  const result = persist.verifySnapshot(parsed);
+  if (!result.ok) {
+    console.error('  [FAIL] ' + f + ' -- ' + result.reason);
+    failed++;
+    continue;
+  }
+  if (result.reason === 'OK') {
+    if (verbose) console.log('  [OK]   ' + f + ' -- already signed under current key');
+    alreadySigned++;
+    continue;
+  }
+  // MIGRATION or ROTATED: resign with current key
+  if (dryRun) {
+    console.log('  [DRY]  ' + f + ' -- would re-sign (' + result.reason + ')');
+    migrated++;
+    continue;
+  }
+  try {
+    const envelope = persist.signSnapshot(result.body);
+    fs.writeFileSync(full, JSON.stringify(envelope, null, 2));
+    console.log('  [RESIGN] ' + f + ' (' + result.reason + ')');
+    migrated++;
+  } catch (err) {
+    console.error('  [FAIL] ' + f + ' -- write failed: ' + err.message);
+    failed++;
+  }
+}
+
+console.log('gapt-resign summary: ' + migrated + ' migrated, ' + alreadySigned + ' already signed, ' + failed + ' failed');
+process.exit(failed === 0 ? 0 : 1);

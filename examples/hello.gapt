@@ -1,0 +1,43 @@
+// GAPT -- hello.gapt
+// First Gapt program
+// FizzNetwork -- @fizznetwork
+
+graph main {
+
+  node user  { role: "client" }
+  node vault { role: "storage" }
+  node admin { role: "superuser" }
+
+  edge user -> vault {
+    guard: data.type == "valid"
+    label: "vault-access"
+    lock:  key == "user-key-001"
+  }
+
+  edge admin -> vault {
+    guard: data.clearance == "high"
+    label: "admin-access"
+    lock:  key.startsWith("adm-") && key.length > 12
+  }
+
+  send user -> vault {
+    data: { type: "valid", payload: "hello gapt" }
+    key:  "user-key-001"
+  }
+
+  send user -> vault {
+    data: { type: "valid" }
+    key:  "wrong-key"
+  }
+
+  send user -> vault {
+    data: { type: "invalid" }
+    key:  "user-key-001"
+  }
+
+  send admin -> vault {
+    data: { clearance: "high" }
+    key:  "adm-masterkey-001"
+  }
+
+}

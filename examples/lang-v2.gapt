@@ -1,0 +1,29 @@
+// lang-v2.gapt -- gapt language v2 demo
+// Shows: let bindings + if/else conditionals.
+
+let masterKey   = "secret-123"
+let environment = "prod"
+
+graph main {
+  node user  { role: "client" }
+  node vault { role: "storage" }
+
+  if environment == "prod" {
+    edge user -> vault {
+      guard: data.type == "valid"
+      label: "vault-access-prod"
+      lock:  key == masterKey
+    }
+  } else {
+    edge user -> vault {
+      guard: data.type == "valid"
+      label: "vault-access-dev"
+      lock:  key == "dev-key"
+    }
+  }
+
+  send user -> vault {
+    data: { type: "valid" }
+    key:  "secret-123"
+  }
+}

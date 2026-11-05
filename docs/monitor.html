@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GAPT Live Monitor</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#030a03;--panel:#050f05;--border:#0d2b0d;--dim:#0a1f0a;
+    --green:#00ff41;--green2:#00cc33;--green3:#007a1f;--green4:#003d10;
+    --amber:#ffaa00;--red:#ff2200;--white:#e0ffe0;--muted:#2a4a2a;
+    --glow:0 0 8px rgba(0,255,65,0.4);--glow-red:0 0 12px rgba(255,34,0,0.6);--glow-amb:0 0 10px rgba(255,170,0,0.5);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--green);font-family:'Share Tech Mono',monospace;font-size:12px;line-height:1.5;overflow-x:hidden;min-height:100vh;cursor:crosshair;width:100%;max-width:100vw;animation:flicker 8s infinite;}
+  @keyframes flicker{0%,100%{opacity:1;}93%{opacity:0.85;}96%{opacity:0.9;}}
+  body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.08) 2px,rgba(0,0,0,0.08) 4px);pointer-events:none;z-index:1000;}
+  header{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid var(--border);background:var(--panel);position:sticky;top:0;z-index:100;}
+  .logo{font-family:'Orbitron',monospace;font-size:14px;font-weight:900;letter-spacing:3px;color:var(--green);text-shadow:var(--glow);}
+  @media(min-width:600px){.logo{font-size:20px;letter-spacing:6px;}}
+  .logo span{color:var(--green3);}
+  .header-meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end;}
+  .meta-chip{font-size:10px;letter-spacing:2px;color:var(--green3);text-transform:uppercase;}
+  .meta-chip.live{color:var(--green);text-shadow:var(--glow);display:flex;align-items:center;gap:6px;}
+  .pulse{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:var(--glow);animation:blink 1s infinite;}
+  @keyframes blink{0%,100%{opacity:1;}50%{opacity:0.2;}}
+  .sys-time{font-size:11px;color:var(--green3);letter-spacing:1px;}
+  .grid{display:flex;flex-direction:column;gap:1px;background:var(--border);min-height:calc(100vh - 49px);}
+  @media(min-width:900px){.grid{display:grid;grid-template-columns:1fr 1fr 300px;}#graph-panel{grid-column:1/3;}#threat-panel{grid-row:1/4;grid-column:3;}.gap-cards{grid-column:1/3;}#log-row{grid-column:1/3;}}
+  .panel{background:var(--panel);padding:12px;position:relative;overflow:hidden;min-width:0;width:100%;}
+  @media(min-width:600px){.panel{padding:16px;}}
+  .panel-title{font-family:'Orbitron',monospace;font-size:10px;letter-spacing:3px;color:var(--green3);text-transform:uppercase;margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+  .panel-title span{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);}
+  #graph-panel{min-height:240px;}
+  @media(max-width:899px){#graph-panel{display:none;}}
+  #graph-canvas{width:100%;height:220px;position:relative;overflow-x:auto;overflow-y:hidden;}
+  .graph-svg{min-width:360px;width:100%;height:100%;display:block;}
+  #threat-panel{order:1;}.gap-cards{order:2;}#log-row{order:3;}
+  @media(min-width:900px){#threat-panel,  .gap-cards,#log-row{order:unset;}}
+  .gap-cards{grid-column:1/3;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1px;background:var(--border);}
+  .gap-card{background:var(--panel);padding:16px;border-left:2px solid var(--green3);transition:border-color 0.3s;cursor:pointer;}
+  .gap-card.threat-1{border-left-color:var(--amber);}
+  .gap-card.threat-2{border-left-color:var(--amber);animation:amberpulse 1s infinite;}
+  .gap-card.threat-3{border-left-color:var(--red);animation:redpulse 0.5s infinite;}
+  @keyframes amberpulse{0%,100%{border-left-color:var(--amber);}50%{border-left-color:rgba(255,170,0,0.3);}}
+  @keyframes redpulse{0%,100%{border-left-color:var(--red);}50%{border-left-color:rgba(255,34,0,0.3);}}
+  .gap-id{font-family:'Orbitron',monospace;font-size:11px;letter-spacing:2px;color:var(--green);margin-bottom:4px;text-shadow:var(--glow);}
+  .gap-type{font-size:10px;color:var(--green3);margin-bottom:12px;letter-spacing:1px;}
+  .gap-stats{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;min-width:0;}
+  .stat{background:var(--dim);padding:8px 10px;border:1px solid var(--border);}
+  .stat-label{font-size:9px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:2px;}
+  .stat-value{font-size:18px;font-family:'Orbitron',monospace;color:var(--green);text-shadow:var(--glow);}
+  .stat-value.danger{color:var(--red);text-shadow:var(--glow-red);}
+  .stat-value.warn{color:var(--amber);}
+  .threat-bar-wrap{margin-bottom:8px;}
+  .threat-bar-label{display:flex;justify-content:space-between;font-size:9px;letter-spacing:2px;color:var(--green3);margin-bottom:4px;text-transform:uppercase;}
+  .threat-bar{height:4px;background:var(--dim);border:1px solid var(--border);overflow:hidden;}
+  .threat-bar-fill{height:100%;background:var(--green);transition:width 0.5s,background 0.5s;}
+  .badges{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;}
+  .badge{font-size:9px;letter-spacing:1px;padding:2px 6px;border:1px solid var(--green3);color:var(--green3);text-transform:uppercase;}
+  .badge.active{border-color:var(--green);color:var(--green);text-shadow:var(--glow);}
+  .badge.danger{border-color:var(--red);color:var(--red);}
+  .badge.warn{border-color:var(--amber);color:var(--amber);}
+  .badge.locked{border-color:var(--red);color:var(--red);background:rgba(255,34,0,0.1);}
+  #log-feed{height:320px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--green3) var(--dim);}
+  #log-feed::-webkit-scrollbar{width:4px;}#log-feed::-webkit-scrollbar-track{background:var(--dim);}#log-feed::-webkit-scrollbar-thumb{background:var(--green3);}
+  .log-entry{padding:6px 0;border-bottom:1px solid var(--dim);display:grid;grid-template-columns:70px 52px 1fr;gap:6px;align-items:start;animation:fadeIn 0.3s ease;font-size:10px;}
+  @keyframes fadeIn{from{opacity:0;transform:translateX(-4px);}to{opacity:1;transform:translateX(0);}}
+  .log-time{color:var(--green3);white-space:nowrap;}.log-status-pass{color:var(--green);text-shadow:var(--glow);}.log-status-fail{color:var(--red);}.log-status-pred{color:var(--amber);}.log-msg{color:var(--green2);word-break:break-all;}
+  .controls{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;min-width:0;width:100%;}
+  .ctrl-group-label{font-size:9px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:4px;}
+  .btn{background:var(--dim);border:1px solid var(--green3);color:var(--green);font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px;padding:8px 10px;cursor:pointer;text-align:left;transition:all 0.15s;text-transform:uppercase;width:100%;box-sizing:border-box;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .btn:hover{background:var(--green4);border-color:var(--green);text-shadow:var(--glow);box-shadow:var(--glow);}
+  .btn.danger{border-color:var(--red);color:var(--red);}
+  .btn.danger:hover{background:rgba(255,34,0,0.1);box-shadow:var(--glow-red);}
+  .btn.amber{border-color:var(--amber);color:var(--amber);}
+  .select{background:var(--dim);border:1px solid var(--green3);color:var(--green);font-family:'Share Tech Mono',monospace;font-size:11px;padding:7px 8px;width:100%;cursor:pointer;max-width:100%;box-sizing:border-box;}
+  .select option{background:var(--panel);}
+  .pred-label{display:flex;justify-content:space-between;font-size:9px;letter-spacing:2px;color:var(--green3);text-transform:uppercase;margin-bottom:6px;}
+  .pred-bar{height:8px;background:var(--dim);border:1px solid var(--border);overflow:hidden;}
+  .pred-fill{height:100%;background:linear-gradient(90deg,var(--green3),var(--green));transition:width 0.5s,background 0.5s;}
+  .pred-fill.high{background:linear-gradient(90deg,var(--amber),var(--red));box-shadow:var(--glow-red);}
+  .pattern-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:12px;}
+  .pattern-flag{font-size:9px;letter-spacing:1px;padding:4px 6px;border:1px solid var(--border);color:var(--muted);text-transform:uppercase;transition:all 0.3s;}
+  .pattern-flag.active{border-color:var(--red);color:var(--red);background:rgba(255,34,0,0.05);text-shadow:var(--glow-red);}
+  .totals{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);margin-bottom:16px;}
+  .total-block{background:var(--dim);padding:10px;text-align:center;}
+  .total-n{font-family:'Orbitron',monospace;font-size:18px;line-height:1;text-shadow:var(--glow);}
+  @media(min-width:600px){.total-n{font-size:22px;}}
+  .total-n.red{color:var(--red);text-shadow:var(--glow-red);}.total-n.amb{color:var(--amber);}
+  .total-label{font-size:9px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-top:4px;}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">GAPT<span>//</span>MONITOR</div>
+  <div class="header-meta">
+    <div class="meta-chip live"><div class="pulse"></div> LIVE</div>
+    <div class="meta-chip">FizzNetwork @fizznetwork</div>
+    <div class="sys-time" id="sys-time">--:--:--</div>
+  </div>
+</header>
+<div class="grid">
+  <div class="panel" id="graph-panel">
+    <div class="panel-title">Network Topology<span id="active-edges">0 active edges</span></div>
+    <div id="graph-canvas"><svg class="graph-svg" id="graph-svg" viewBox="0 0 520 200"></svg></div>
+  </div>
+  <div class="panel" id="threat-panel">
+    <div class="panel-title">Threat Intelligence</div>
+    <div class="totals">
+      <div class="total-block"><div class="total-n" id="total-pass">0</div><div class="total-label">Passed</div></div>
+      <div class="total-block"><div class="total-n red" id="total-fail">0</div><div class="total-label">Blocked</div></div>
+      <div class="total-block"><div class="total-n amb" id="total-pred">0</div><div class="total-label">Pre-empted</div></div>
+    </div>
+    <div class="controls">
+      <div class="ctrl-group-label">Simulate attack on edge:</div>
+      <select class="select" id="attack-target">
+        <option value="user->vault">user -> vault</option>
+        <option value="attacker->vault">attacker -> vault</option>
+        <option value="user->processor">user -> processor</option>
+        <option value="processor->vault">processor -> vault</option>
+      </select>
+      <button class="btn danger" onclick="simulateAttack()">Fire Brute Force</button>
+      <button class="btn amber" onclick="simulateProbe()">Fire Probe</button>
+      <button class="btn" onclick="simulateLegit()">Legit Transmission</button>
+      <button class="btn danger" style="margin-top:4px" onclick="resetSelected()">Reset Selected Gap</button>
+    </div>
+    <div class="ctrl-group-label" style="margin-bottom:8px">Gap prediction state:</div>
+    <div id="pred-readout">
+      <div class="pred-label"><span>Threat confidence</span><span id="pred-pct">0%</span></div>
+      <div class="pred-bar"><div class="pred-fill" id="pred-fill" style="width:0%"></div></div>
+      <div class="pattern-grid" id="pattern-grid">
+        <div class="pattern-flag" id="pf-burst">Burst</div>
+        <div class="pattern-flag" id="pf-rotation">Key Rotation</div>
+        <div class="pattern-flag" id="pf-probe">Probing</div>
+        <div class="pattern-flag" id="pf-dormant">Dormant Burst</div>
+      </div>
+    </div>
+  </div>
+  <div class="gap-cards">
+    <div id="gap-cards-inner" style="display:flex;flex-direction:column;gap:1px;background:var(--border);"></div>
+  </div>
+  <div class="panel" id="log-row">
+    <div class="panel-title">Transmission Log<span id="log-count">0 events</span></div>
+    <div id="log-feed"></div>
+  </div>
+</div>
+<script>
+class GaptMemory{constructor(){this.attempts=[];this.failCount=0;this.passCount=0;this.locked=false;this.trusted=false;this.threatLevel=0;this.patterns={burst:false,rotation:false,probe:false,dormant:false};this.prediction={threat:false,confidence:0,reason:null,preEmpted:0};}
+record(result,key){const entry={ts:Date.now(),passed:result.passed,reason:result.reason,key:key?key.slice(0,4)+'****':'none',rawKey:key,predicted:result.predicted||false};this.attempts.push(entry);if(result.passed)this.passCount++;else this.failCount++;this.updateThreat();this.analysePatterns();return entry;}
+analysePatterns(){const h=this.attempts,now=Date.now(),recent=h.slice(-10);this.patterns.burst=h.filter(a=>(now-a.ts)<500&&!a.passed).length>=5;this.patterns.rotation=new Set(h.filter(a=>!a.passed&&a.rawKey).map(a=>a.rawKey)).size>=4;if(recent.length>=6){let alt=true;for(let i=1;i<6;i++){if(recent[recent.length-i].passed===recent[recent.length-i-1].passed){alt=false;break;}}this.patterns.probe=alt;}if(h.length>=8){const older=h.slice(-10,-5),newer=h.slice(-5);if(older.length>0){const g=newer[0].ts-older[older.length-1].ts,b=newer[newer.length-1].ts-newer[0].ts;this.patterns.dormant=g>2000&&b<200;}}let c=0;if(this.patterns.burst)c+=70;if(this.patterns.rotation)c+=60;if(this.patterns.probe)c+=40;if(this.patterns.dormant)c+=50;c=Math.min(c,100);this.prediction.confidence=c;this.prediction.threat=c>=60;const r=[];if(this.patterns.burst)r.push('BURST');if(this.patterns.rotation)r.push('KEY_ROT');if(this.patterns.probe)r.push('PROBE');if(this.patterns.dormant)r.push('DORMANT');this.prediction.reason=r.join('+')||null;}
+updateThreat(){const rec=this.attempts.slice(-5),fails=rec.filter(a=>!a.passed).length;if(this.locked)this.threatLevel=3;else if(fails>=4){this.threatLevel=3;this.locked=true;}else if(fails>=3)this.threatLevel=2;else if(fails>=2)this.threatLevel=1;else this.threatLevel=0;if(rec.filter(a=>a.passed).length===5)this.trusted=true;}
+reset(auth='system'){this.locked=false;this.threatLevel=0;this.prediction.threat=false;this.prediction.confidence=0;this.trusted=this.passCount>this.failCount;this.attempts.push({ts:Date.now(),passed:null,reason:`RESET by [${auth}]`,key:'AUTH',rawKey:null});}}
+
+class GaptEdge{constructor(from,to,{voidguard,bridgetype,edgelock}){this.from=from;this.to=to;this.voidguard=voidguard;this.bridgetype=bridgetype;this.edgelock=edgelock;this.memory=new GaptMemory();}
+transmit(data,key){const log={from:this.from,to:this.to,bridgetype:this.bridgetype,passed:false,reason:null,predicted:false};if(this.memory.locked){log.reason='GAP_LOCKED';this.memory.record(log,key);return log;}if(this.memory.prediction.threat){log.reason=`PREDICTED [${this.memory.prediction.reason}] ${this.memory.prediction.confidence}%`;log.predicted=true;this.memory.prediction.preEmpted++;this.memory.record(log,key);return log;}if(this.edgelock){const ok=typeof this.edgelock==='function'?this.edgelock(key,data):key===this.edgelock;if(!ok){log.reason='EDGELOCK_FAILED';this.memory.record(log,key);return log;}}if(!this.memory.trusted&&this.voidguard&&!this.voidguard(data)){log.reason='VOIDGUARD_REJECTED';this.memory.record(log,key);return log;}log.passed=true;log.reason='GAPT_CLEAR';log.data=data;if(this.memory.trusted)log.trustedBypass=true;this.memory.record(log,key);return log;}}
+
+const edges={'user->vault':new GaptEdge('user','vault',{bridgetype:'vault-access',voidguard:d=>d.type==='valid',edgelock:'correct-key'}),'attacker->vault':new GaptEdge('attacker','vault',{bridgetype:'vault-access',voidguard:d=>d.type==='valid',edgelock:'correct-key'}),'user->processor':new GaptEdge('user','processor',{bridgetype:'user-submission',voidguard:d=>d.type!==undefined,edgelock:'user-token'}),'processor->vault':new GaptEdge('processor','vault',{bridgetype:'verified-store',voidguard:d=>d.verified===true,edgelock:'proc-clear'})};
+let totalPass=0,totalFail=0,totalPred=0,logCount=0;
+
+function getEdgeId(){return document.getElementById('attack-target').value;}
+function getEdge(id){return edges[id]||edges['user->vault'];}
+function threatColor(l){return['#00ff41','#ffaa00','#ff6600','#ff2200'][l]||'#ff2200';}
+function updateTotals(){document.getElementById('total-pass').textContent=totalPass;document.getElementById('total-fail').textContent=totalFail;document.getElementById('total-pred').textContent=totalPred;}
+
+function addLog(result,edgeId){const feed=document.getElementById('log-feed');logCount++;document.getElementById('log-count').textContent=logCount+' events';const t=new Date().toTimeString().slice(0,8);const entry=document.createElement('div');entry.className='log-entry';const sc=result.predicted?'log-status-pred':result.passed?'log-status-pass':'log-status-fail';const st=result.predicted?'PRED':result.passed?'PASS':'FAIL';entry.innerHTML=`<div class="log-time">${t}</div><div class="${sc}">${st}</div><div class="log-msg">[${edgeId}] ${result.reason}</div>`;feed.insertBefore(entry,feed.firstChild);if(feed.children.length>80)feed.removeChild(feed.lastChild);}
+
+function updatePredReadout(){const id=getEdgeId();const m=getEdge(id).memory;const pct=m.prediction.confidence;document.getElementById('pred-pct').textContent=pct+'%';const fill=document.getElementById('pred-fill');fill.style.width=pct+'%';fill.className='pred-fill'+(pct>=60?' high':'');document.getElementById('pf-burst').className='pattern-flag'+(m.patterns.burst?' active':'');document.getElementById('pf-rotation').className='pattern-flag'+(m.patterns.rotation?' active':'');document.getElementById('pf-probe').className='pattern-flag'+(m.patterns.probe?' active':'');document.getElementById('pf-dormant').className='pattern-flag'+(m.patterns.dormant?' active':'');}
+
+function renderGapCards(){const container=document.getElementById('gap-cards-inner');container.innerHTML='';for(const[id,edge]of Object.entries(edges)){const m=edge.memory;const tl=m.threatLevel;const tc=threatColor(tl);const tLabel=['CLEAN','WATCH','SUSPICIOUS','LOCKDOWN'][tl];const card=document.createElement('div');card.className=`gap-card threat-${tl}`;card.onclick=()=>{document.getElementById('attack-target').value=id;updatePredReadout();};const cp=m.prediction.confidence;card.innerHTML=`<div class="gap-id">${id.replace('->',' -> ')}</div><div class="gap-type">${edge.bridgetype}</div><div class="gap-stats"><div class="stat"><div class="stat-label">Passes</div><div class="stat-value">${m.passCount}</div></div><div class="stat"><div class="stat-label">Blocked</div><div class="stat-value ${tl>=2?'danger':''}">${m.failCount}</div></div><div class="stat"><div class="stat-label">Pre-empted</div><div class="stat-value ${m.prediction.preEmpted>0?'warn':''}">${m.prediction.preEmpted}</div></div><div class="stat"><div class="stat-label">Threat</div><div class="stat-value ${tl>=2?'danger':tl>=1?'warn':''}" style="font-size:10px;padding-top:3px">${tLabel}</div></div></div><div class="threat-bar-wrap"><div class="threat-bar-label"><span>Prediction</span><span>${cp}%</span></div><div class="threat-bar"><div class="threat-bar-fill" style="width:${cp}%;background:${cp>=60?'var(--red)':'var(--green3)'}"></div></div></div><div class="badges">${m.trusted?'<div class="badge active">Trusted</div>':''}${m.locked?'<div class="badge locked">Locked</div>':''}${m.prediction.threat?'<div class="badge danger">Threat Predicted</div>':''}${m.patterns.burst?'<div class="badge danger">Burst</div>':''}${m.patterns.rotation?'<div class="badge danger">Key Rotation</div>':''}${m.patterns.probe?'<div class="badge warn">Probing</div>':''}</div>`;container.appendChild(card);}}
+
+function renderGraph(){const svg=document.getElementById('graph-svg');const nodes={'user':{x:60,y:90,label:'USER'},'attacker':{x:60,y:160,label:'ATTCK'},'processor':{x:260,y:90,label:'PROC'},'vault':{x:440,y:125,label:'VAULT'}};document.getElementById('active-edges').textContent=Object.keys(edges).length+' active edges';let html='';for(const[id,edge]of Object.entries(edges)){const from=nodes[edge.from],to=nodes[edge.to];if(!from||!to)continue;const col=threatColor(edge.memory.threatLevel);const mid={x:(from.x+to.x)/2,y:(from.y+to.y)/2};html+=`<line x1="${from.x}" y1="${from.y}" x2="${to.x}" y2="${to.y}" stroke="${col}" stroke-width="1.5" stroke-opacity="0.4" stroke-dasharray="4 3"/>`;html+=`<rect x="${mid.x-28}" y="${mid.y-10}" width="56" height="20" fill="var(--panel)" stroke="${col}" stroke-width="1" rx="2"/>`;html+=`<text x="${mid.x}" y="${mid.y+4}" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="8" fill="${col}" letter-spacing="1">GAP${edge.memory.threatLevel>0?'!':'ok'}</text>`;}for(const[id,n]of Object.entries(nodes)){html+=`<circle cx="${n.x}" cy="${n.y}" r="22" fill="var(--panel)" stroke="var(--green3)" stroke-width="1.5"/>`;html+=`<text x="${n.x}" y="${n.y-6}" text-anchor="middle" font-family="Orbitron,monospace" font-size="7" fill="var(--green)" letter-spacing="1">${n.label}</text>`;}svg.innerHTML=html;}
+
+function fire(id,data,key){const edge=getEdge(id);const result=edge.transmit(data,key);addLog(result,id);if(result.passed)totalPass++;else if(result.predicted)totalPred++;else totalFail++;updateTotals();renderGapCards();renderGraph();updatePredReadout();return result;}
+function simulateAttack(){const id=getEdgeId();const keys=['hack-aaa','hack-bbb','hack-ccc','hack-ddd','hack-eee','hack-fff'];let i=0;const iv=setInterval(()=>{fire(id,{type:'valid'},keys[i%keys.length]);i++;if(i>=6)clearInterval(iv);},120);}
+function simulateProbe(){const id=getEdgeId();const seq=[{key:'correct-key',data:{type:'valid'}},{key:'wrong-key',data:{type:'valid'}},{key:'correct-key',data:{type:'valid'}},{key:'wrong-key',data:{type:'valid'}},{key:'correct-key',data:{type:'valid'}},{key:'wrong-key',data:{type:'valid'}}];let i=0;const iv=setInterval(()=>{fire(id,seq[i].data,seq[i].key);i++;if(i>=seq.length)clearInterval(iv);},200);}
+function simulateLegit(){const id=getEdgeId();const keys={'user->vault':'correct-key','attacker->vault':'correct-key','user->processor':'user-token','processor->vault':'proc-clear'};const datas={'user->vault':{type:'valid'},'attacker->vault':{type:'valid'},'user->processor':{type:'submission'},'processor->vault':{verified:true}};fire(id,datas[id]||{type:'valid'},keys[id]||'correct-key');}
+function resetSelected(){const id=getEdgeId();getEdge(id).memory.reset('admin-kizldn');addLog({passed:null,reason:'GAP RESET by admin-kizldn',predicted:false},id);renderGapCards();renderGraph();updatePredReadout();}
+
+function tick(){document.getElementById('sys-time').textContent=new Date().toTimeString().slice(0,8);}
+setInterval(tick,1000);tick();
+document.getElementById('attack-target').addEventListener('change',updatePredReadout);
+renderGapCards();renderGraph();updatePredReadout();
+</script>
+</body>
+</html>

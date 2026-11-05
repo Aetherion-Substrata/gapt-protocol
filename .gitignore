@@ -1,0 +1,12 @@
+node_modules/
+data/
+*.log
+.DS_Store
+.env
+.npmrc
+
+logs/
+
+# build artifacts -- regenerated on publish via prepublishOnly hook
+dist/
+*.tmp

@@ -1,0 +1,34 @@
+{
+  "name": "gapt-protocol",
+  "version": "0.12.0",
+  "description": "A data structure where the gap between nodes is a first-class citizen.",
+  "main": "src/gapt.js",
+  "types": "src/gapt.d.ts",
+  "browser": "dist/gapt.browser.js",
+  "unpkg": "dist/gapt.browser.js",
+  "jsdelivr": "dist/gapt.browser.js",
+  "bin": {
+    "gapt-resign": "./bin/gapt-resign"
+  },
+  "scripts": {
+    "test": "node tests/sprint01.js && node tests/sprint02.js && node tests/sprint03.js && node tests/sprint04.js && node tests/sprint06.js && node tests/browser-smoke.js",
+    "test:fuzz": "node tests/sprint06-fuzz.js",
+    "test:security": "node runner.js tests/sprint19.js sprint19 && node runner.js tests/sprint20.js sprint20",
+    "test:browser": "node tests/browser-smoke.js",
+    "test:all": "npm test && npm run test:fuzz && npm run test:security",
+    "build:browser": "node build/build-browser.js",
+    "prepublishOnly": "npm run build:browser",
+    "example": "node gapt.run.js examples/hello.gapt",
+    "example:v3": "node gapt.run.js examples/lang-v3.gapt"
+  },
+  "keywords": ["graph", "data-structure", "security", "gapt", "fizznetwork", "gapt-protocol"],
+  "author": "Aetherion — Kizldn (https://github.com/kizldn)",
+  "license": "SEE LICENSE IN LICENSE",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FizzNetwork/gapt-protocol.git"
+  },
+  "homepage": "https://github.com/FizzNetwork/gapt-protocol#readme",
+  "engines": { "node": ">=14.0.0" },
+  "files": ["src", "bin", "dist", "examples", "README.md", "CHANGELOG.md", "LICENSE"]
+}

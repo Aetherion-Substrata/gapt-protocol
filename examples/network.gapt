@@ -1,0 +1,50 @@
+// GAPT -- network.gapt
+// Multi-graph network example
+// FizzNetwork -- @fizznetwork
+
+graph frontend {
+  node browser { role: "client" }
+  node api     { role: "gateway" }
+
+  edge browser -> api {
+    guard: data.token != ""
+    label: "api-request"
+    lock:  key.startsWith("tok-")
+  }
+
+  send browser -> api {
+    data: { token: "abc123", payload: "request" }
+    key:  "tok-valid-001"
+  }
+
+  send browser -> api {
+    data: { token: "" }
+    key:  "hack-attempt"
+  }
+}
+
+graph backend {
+  node api      { role: "gateway" }
+  node database { role: "storage" }
+
+  edge api -> database {
+    guard: data.verified == true
+    label: "db-write"
+    lock:  key == "internal-db-key"
+  }
+
+  send api -> database {
+    data: { verified: true, record: "save this" }
+    key:  "internal-db-key"
+  }
+
+  send api -> database {
+    data: { verified: false }
+    key:  "internal-db-key"
+  }
+}
+
+network {
+  graph frontend
+  graph backend
+}

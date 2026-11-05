@@ -1,0 +1,41 @@
+// lang-v3.gapt -- gapfn demo (0.11.0)
+//
+// Every function below is a gap. Each call routes through GaptEdge.transmit()
+// under the hood, so the same threat patterns, trust accounting, and lockdown
+// that defend edges defend the functions themselves.
+
+let adminKey = "secret-123"
+let maxSize  = 1024
+
+// Reusable guard: shape-check a payload.
+gapfn validPayload(d) {
+  body: { return d.type == "valid" }
+}
+
+// Reusable lock predicate: caller must be the auth flow AND key must match.
+gapfn isAdmin(k) {
+  lock: caller == "auth-flow"
+  body: { return k == adminKey }
+}
+
+graph main {
+  node user  { role: "client" }
+  node vault { role: "storage" }
+
+  edge user -> vault {
+    guard: validPayload(data)
+    lock:  isAdmin(key, as: "auth-flow")
+  }
+
+  send user -> vault {
+    data: { type: "valid" }
+    key:  "secret-123"
+  }
+
+  // Wrong key -- exercises the lockdown machinery of isAdmin itself
+  // (not just the edge), because isAdmin's lock fired and recorded a fail.
+  send user -> vault {
+    data: { type: "valid" }
+    key:  "wrong-key"
+  }
+}
